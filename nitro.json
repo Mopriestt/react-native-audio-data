@@ -1,0 +1,17 @@
+{
+  "cxxNamespace": ["audiodata"],
+  "ios": {
+    "iosModuleName": "AudioData"
+  },
+  "android": {
+    "androidNamespace": ["audiodata"],
+    "androidCxxLibName": "audiodata"
+  },
+  "autolinking": {
+    "AudioData": {
+      "swift": "AudioData",
+      "kotlin": "AudioData"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
