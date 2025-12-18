@@ -9,8 +9,7 @@
   },
   "autolinking": {
     "AudioData": {
-      "swift": "AudioData",
-      "kotlin": "AudioData"
+      "cpp": "HybridAudioData"
     }
   },
   "ignorePaths": ["node_modules"]
