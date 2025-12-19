@@ -13,11 +13,13 @@ include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/audiodata+autolinking.
 
 target_sources(${PACKAGE_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/../cpp/HybridAudioData.cpp
+  ${CMAKE_SOURCE_DIR}/../cpp/dr_libs/dr_libs_impl.cpp
 )
 
 target_include_directories(${PACKAGE_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/../cpp
+  ${CMAKE_SOURCE_DIR}/../cpp/dr_libs
 )
 
 find_library(LOG_LIB log)
