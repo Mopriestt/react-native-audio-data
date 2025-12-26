@@ -15,7 +15,9 @@
 
 
 
-
+#include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/Promise.hpp>
+#include <string>
 
 namespace margelo::nitro::audiodata {
 
@@ -48,7 +50,7 @@ namespace margelo::nitro::audiodata {
 
     public:
       // Methods
-      virtual double multiply(double a, double b) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> getRawPcmData(const std::string& path) = 0;
 
     protected:
       // Hybrid Setup

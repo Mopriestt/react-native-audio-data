@@ -1,16 +1,30 @@
 #pragma once
 
+#include <vector>
+#include <string>
 #include <memory>
-#include <NitroModules/HybridObject.hpp>
+
+// 引入 Nitro 核心模块
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/ArrayBuffer.hpp>
+
+// 引入 Nitrogen 自动生成的基类 (Spec)
+// 这个文件名取决于你的 nitro.json 配置，通常是 "HybridAudioDataSpec.hpp"
 #include "HybridAudioDataSpec.hpp"
 
 namespace margelo::nitro::audiodata {
-    class HybridAudioData : public HybridAudioDataSpec {
-    public:
-        HybridAudioData() : HybridObject(TAG) {}
 
-        double multiply(double a, double b) override;
+  class HybridAudioData : public HybridAudioDataSpec {
+  public:
+    HybridAudioData() : HybridObject(TAG) {}
+    virtual ~HybridAudioData() {}
 
-        static constexpr auto TAG = "AudioData";
-    };
+    // 内存估算 (可选)
+    // void loadMemorySize() override {} 
+
+    // 核心接口实现
+    // TS: getRawPcmData(path: string): Promise<ArrayBuffer>
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> getRawPcmData(const std::string& path) override;
+  };
+
 }
