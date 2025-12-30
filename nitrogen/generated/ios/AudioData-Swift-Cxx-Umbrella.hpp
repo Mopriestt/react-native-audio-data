@@ -8,10 +8,16 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-
+// Forward declaration of `HybridFileHelperSpec` to properly resolve imports.
+namespace margelo::nitro::audiodata { class HybridFileHelperSpec; }
 
 // Include C++ defined types
-
+#include "HybridFileHelperSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/Result.hpp>
+#include <exception>
+#include <memory>
+#include <string>
 
 // C++ helpers for Swift
 #include "AudioData-Swift-Cxx-Bridge.hpp"
@@ -23,7 +29,8 @@
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
-
+// Forward declaration of `HybridFileHelperSpec_cxx` to properly resolve imports.
+namespace AudioData { class HybridFileHelperSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("AudioData-Swift.h")

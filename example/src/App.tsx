@@ -40,12 +40,10 @@ export default function App() {
         return;
       }
 
-      // ✨ 更新路径状态
       setSelectedPath(file.uri);
       
-      setLog(`Selected: ${file.name}\nURI: ${file.uri}\n\nProcessing...`);
+      setLog(`Selected: ${file.name}\nURI: ${file.uri}\n\n Processed Uri: Processing...`);
 
-      // 2. 调用 C++ (Native 自动处理 content:// -> cache copy)
       const buffer = await getRawPcmData(file.uri);
 
       const bytes = new Uint8Array(buffer);
@@ -54,7 +52,7 @@ export default function App() {
         prev + 
         `\n\n✅ Success!` +
         `\nBuffer Size: ${bytes.length} bytes` +
-        `\nData Preview: [${bytes.slice(0, 10).join(', ')}...]`
+        `\nData Preview: [${bytes.slice(0, 100).join(', ')}...]`
       );
 
     } catch (err) {

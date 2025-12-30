@@ -19,11 +19,6 @@ namespace margelo::nitro::audiodata {
     HybridAudioData() : HybridObject(TAG) {}
     virtual ~HybridAudioData() {}
 
-    // 内存估算 (可选)
-    // void loadMemorySize() override {} 
-
-    // 核心接口实现
-    // TS: getRawPcmData(path: string): Promise<ArrayBuffer>
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> getRawPcmData(const std::string& path) override;
   };
 

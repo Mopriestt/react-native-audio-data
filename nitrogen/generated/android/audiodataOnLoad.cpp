@@ -15,7 +15,9 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridFileHelperSpec.hpp"
 #include "HybridAudioData.hpp"
+#include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::audiodata {
 
@@ -26,7 +28,7 @@ int initialize(JavaVM* vm) {
 
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
-    
+    margelo::nitro::audiodata::JHybridFileHelperSpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
@@ -36,6 +38,14 @@ int initialize(JavaVM* vm) {
                       "The HybridObject \"HybridAudioData\" is not default-constructible! "
                       "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
         return std::make_shared<HybridAudioData>();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "FileHelper",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridFileHelperSpec::javaobject> object("com/margelo/nitro/audiodata/HybridFileHelper");
+        auto instance = object.create();
+        return instance->cthis()->shared();
       }
     );
   });

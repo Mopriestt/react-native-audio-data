@@ -10,6 +10,10 @@
   "autolinking": {
     "AudioData": {
       "cpp": "HybridAudioData"
+    },
+    "FileHelper": {
+      "swift": "HybridFileHelper",
+      "kotlin": "HybridFileHelper"
     }
   },
   "ignorePaths": ["node_modules"]

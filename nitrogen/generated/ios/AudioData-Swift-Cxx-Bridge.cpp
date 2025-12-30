@@ -8,10 +8,42 @@
 #include "AudioData-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-
+#include "AudioData-Swift-Cxx-Umbrella.hpp"
+#include "HybridFileHelperSpecSwift.hpp"
+#include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::audiodata::bridge::swift {
 
+  // pragma MARK: std::function<void(const std::string& /* result */)>
+  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = AudioData::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::string& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
   
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = AudioData::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridFileHelperSpec>
+  std::shared_ptr<HybridFileHelperSpec> create_std__shared_ptr_HybridFileHelperSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    AudioData::HybridFileHelperSpec_cxx swiftPart = AudioData::HybridFileHelperSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::audiodata::HybridFileHelperSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridFileHelperSpec_(std__shared_ptr_HybridFileHelperSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::audiodata::HybridFileHelperSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::audiodata::HybridFileHelperSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridFileHelperSpec\" is not implemented in Swift!");
+    }
+    #endif
+    AudioData::HybridFileHelperSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
 
 } // namespace margelo::nitro::audiodata::bridge::swift

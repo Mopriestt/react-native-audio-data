@@ -7,10 +7,11 @@
 
 #import <Foundation/Foundation.h>
 #import <NitroModules/HybridObjectRegistry.hpp>
-
+#import "AudioData-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
 #include "HybridAudioData.hpp"
+#include "HybridFileHelperSpecSwift.hpp"
 
 @interface AudioDataAutolinking : NSObject
 @end
@@ -28,6 +29,13 @@
                     "The HybridObject \"HybridAudioData\" is not default-constructible! "
                     "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
       return std::make_shared<HybridAudioData>();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "FileHelper",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridFileHelperSpec> hybridObject = AudioData::AudioDataAutolinking::createFileHelper();
+      return hybridObject;
     }
   );
 }

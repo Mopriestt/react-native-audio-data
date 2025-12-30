@@ -34,8 +34,9 @@ target_sources(
   ../nitrogen/generated/android/audiodataOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridAudioDataSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridFileHelperSpec.cpp
   # Android-specific Nitrogen C++ sources
-  
+  ../nitrogen/generated/android/c++/JHybridFileHelperSpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake
