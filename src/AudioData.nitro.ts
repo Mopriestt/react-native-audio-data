@@ -7,7 +7,8 @@ export interface AudioDataResult {
   totalPCMFrameCount: number;
 }
 
-export interface AudioData extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
+export interface AudioData
+  extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   getRawPcmData(filePath: string): Promise<AudioDataResult>;
 
   getWaveformData(filePath: string, targetPoints: number): Promise<number[]>;

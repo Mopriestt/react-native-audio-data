@@ -32,7 +32,9 @@ export function resolveFilePath(rawPath: string): Promise<string> {
  * @returns A promise that resolves to an object containing the raw PCM buffer (`ArrayBuffer`), channel count, sample rate, and total frame count.
  * @throws Will throw an error if the file cannot be read or decoded.
  */
-export async function getRawPcmData(filePath: string): Promise<AudioDataResult> {
+export async function getRawPcmData(
+  filePath: string
+): Promise<AudioDataResult> {
   const physicalPath = await resolveFilePath(filePath);
   return AudioDataHybridObject.getRawPcmData(physicalPath);
 }
@@ -46,7 +48,10 @@ export async function getRawPcmData(filePath: string): Promise<AudioDataResult> 
  * @returns A promise that resolves to an array of numbers (RMS values) representing the amplitude of the waveform (0.0 to 1.0).
  * @throws Will throw an error if the file cannot be read or decoded.
  */
-export async function getWaveformData(filePath: string, targetPoints: number): Promise<number[]> {
+export async function getWaveformData(
+  filePath: string,
+  targetPoints: number
+): Promise<number[]> {
   const physicalPath = await resolveFilePath(filePath);
   return AudioDataHybridObject.getWaveformData(physicalPath, targetPoints);
 }

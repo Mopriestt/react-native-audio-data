@@ -26,10 +26,12 @@ const WaveformView = ({ data }: { data: number[] }) => {
 
   return (
     <View style={styles.waveformContainer}>
-      <Text style={styles.chartTitle}>WAVEFORM PREVIEW ({data.length} points)</Text>
+      <Text style={styles.chartTitle}>
+        WAVEFORM PREVIEW ({data.length} points)
+      </Text>
       <View style={styles.barsContainer}>
         {data.map((value, index) => {
-          let heightPercent = (value * scale) * 100;
+          let heightPercent = value * scale * 100;
           heightPercent = Math.max(heightPercent, 2);
           return (
             <View
@@ -38,7 +40,7 @@ const WaveformView = ({ data }: { data: number[] }) => {
                 styles.bar,
                 {
                   height: `${heightPercent}%`,
-                  opacity: 0.5 + (value * scale) * 0.5,
+                  opacity: 0.5 + value * scale * 0.5,
                 },
               ]}
             />
@@ -86,19 +88,24 @@ export default function App() {
       const result = await getRawPcmData(file.uri);
       const { buffer, channels, sampleRate, totalPCMFrameCount } = result;
 
-      setLog(prev =>
-        prev +
-        `\n\n✅ Success!` +
-        `\nRequested Points: ${targetPoints}` +
-        `\nActual Points: ${points.length}` +
-        `\nBuffer ByteLength: ${buffer.byteLength}` +
-        `\nChannels: ${channels}` +
-        `\nSampleRate: ${sampleRate}` +
-        `\nTotal Frames: ${totalPCMFrameCount}`
+      setLog(
+        (prev) =>
+          prev +
+          `\n\n✅ Success!` +
+          `\nRequested Points: ${targetPoints}` +
+          `\nActual Points: ${points.length}` +
+          `\nBuffer ByteLength: ${buffer.byteLength}` +
+          `\nChannels: ${channels}` +
+          `\nSampleRate: ${sampleRate}` +
+          `\nTotal Frames: ${totalPCMFrameCount}`
       );
-
     } catch (err) {
-      if (typeof err === 'object' && err !== null && 'code' in err && (err as any).code === 'DOCUMENT_PICKER_CANCELED') {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'code' in err &&
+        (err as any).code === 'DOCUMENT_PICKER_CANCELED'
+      ) {
         setLog('User cancelled');
       } else {
         console.error(err);
@@ -117,7 +124,12 @@ export default function App() {
         {selectedPath && (
           <View style={styles.pathContainer}>
             <Text style={styles.pathLabel}>Current File Path:</Text>
-            <Text style={styles.pathText} selectable numberOfLines={1} ellipsizeMode="middle">
+            <Text
+              style={styles.pathText}
+              selectable
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
               {selectedPath}
             </Text>
           </View>
@@ -139,7 +151,7 @@ export default function App() {
 
         <View style={styles.buttonContainer}>
           <Button
-            title={loading ? "Processing..." : "Pick Audio & Analyze"}
+            title={loading ? 'Processing...' : 'Pick Audio & Analyze'}
             onPress={handlePickAndProcess}
             disabled={loading}
           />
