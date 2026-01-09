@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Text,
   View,
@@ -6,57 +6,102 @@ import {
   Button,
   ScrollView,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 
-// 使用新库的具名导入
 import { pick, types } from '@react-native-documents/picker';
+import { getRawPcmData, getWaveformData } from 'react-native-audio-data';
 
-// 你的库
-import { getRawPcmData } from 'react-native-audio-data';
+// --- Waveform 组件保持不变 ---
+const WaveformView = ({ data }: { data: number[] }) => {
+  if (!data || data.length === 0) {
+    return (
+      <View style={[styles.waveformContainer, styles.emptyContainer]}>
+        <Text style={styles.emptyText}>Waveform will appear here</Text>
+      </View>
+    );
+  }
+
+  const maxVal = Math.max(...data, 0.0001);
+  const scale = 1 / maxVal;
+
+  return (
+    <View style={styles.waveformContainer}>
+      <Text style={styles.chartTitle}>WAVEFORM PREVIEW ({data.length} points)</Text>
+      <View style={styles.barsContainer}>
+        {data.map((value, index) => {
+          let heightPercent = (value * scale) * 100;
+          heightPercent = Math.max(heightPercent, 2);
+          return (
+            <View
+              key={index}
+              style={[
+                styles.bar,
+                {
+                  height: `${heightPercent}%`,
+                  opacity: 0.5 + (value * scale) * 0.5,
+                },
+              ]}
+            />
+          );
+        })}
+      </View>
+    </View>
+  );
+};
 
 export default function App() {
   const [log, setLog] = useState<string>('Waiting for action...');
   const [loading, setLoading] = useState(false);
-  
-  // ✨ 新增：专门用于存储和显示路径的状态
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [waveformData, setWaveformData] = useState<number[]>([]);
+
+  // 👈 2. 新增输入框状态，默认 "50"
+  const [pointCount, setPointCount] = useState<string>('50');
 
   const handlePickAndProcess = async () => {
     try {
       setLoading(true);
       setLog('Picking file...');
-      setSelectedPath(null); // 重置路径显示
+      setSelectedPath(null);
+      setWaveformData([]);
 
-      // 1. 选择文件
+      // 👈 3. 解析输入值，如果是无效数字则回退到 50
+      const targetPoints = parseInt(pointCount, 10) || 50;
+
       const results = await pick({
         type: [types.audio],
-        allowMultiSelection: false, 
+        allowMultiSelection: false,
       });
 
       const file = results[0];
-
       if (!file) {
         setLog('No file selected');
         return;
       }
 
       setSelectedPath(file.uri);
-      
-      setLog(`Selected: ${file.name}\nURI: ${file.uri}\n\n Processed Uri: Processing...`);
 
-      const buffer = await getRawPcmData(file.uri);
+      // 👈 4. 使用输入的 targetPoints
+      setLog(`Selected: ${file.name}\nProcessing ${targetPoints} points...`);
+      const points = await getWaveformData(file.uri, targetPoints);
+      setWaveformData(points);
 
-      const bytes = new Uint8Array(buffer);
-      
-      setLog(prev => 
-        prev + 
+      const result = await getRawPcmData(file.uri);
+      const { buffer, channels, sampleRate, totalPCMFrameCount } = result;
+
+      setLog(prev =>
+        prev +
         `\n\n✅ Success!` +
-        `\nBuffer Size: ${bytes.length} bytes` +
-        `\nData Preview: [${bytes.slice(0, 100).join(', ')}...]`
+        `\nRequested Points: ${targetPoints}` +
+        `\nActual Points: ${points.length}` +
+        `\nBuffer ByteLength: ${buffer.byteLength}` +
+        `\nChannels: ${channels}` +
+        `\nSampleRate: ${sampleRate}` +
+        `\nTotal Frames: ${totalPCMFrameCount}`
       );
 
     } catch (err) {
-      // 错误处理
       if (typeof err === 'object' && err !== null && 'code' in err && (err as any).code === 'DOCUMENT_PICKER_CANCELED') {
         setLog('User cancelled');
       } else {
@@ -72,21 +117,35 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.header}>Audio Data Nitro Demo</Text>
-        
-        {/* ✨ 新增：路径显示区域 */}
+
         {selectedPath && (
           <View style={styles.pathContainer}>
             <Text style={styles.pathLabel}>Current File Path:</Text>
-            <Text style={styles.pathText} selectable>
+            <Text style={styles.pathText} selectable numberOfLines={1} ellipsizeMode="middle">
               {selectedPath}
             </Text>
           </View>
         )}
-        
+
+        <WaveformView data={waveformData} />
+
+        {/* 👈 5. 新增输入框区域 */}
+        <View style={styles.settingsContainer}>
+          <Text style={styles.settingLabel}>Target Blocks:</Text>
+          <TextInput
+            style={styles.input}
+            value={pointCount}
+            onChangeText={setPointCount}
+            keyboardType="numeric" // 只允许输入数字
+            maxLength={4} // 限制长度，防止输入太多卡死渲染
+            placeholder="50"
+          />
+        </View>
+
         <View style={styles.buttonContainer}>
-          <Button 
-            title={loading ? "Processing..." : "Pick Audio & Get PCM"} 
-            onPress={handlePickAndProcess} 
+          <Button
+            title={loading ? "Processing..." : "Pick Audio & Analyze"}
+            onPress={handlePickAndProcess}
             disabled={loading}
           />
         </View>
@@ -117,26 +176,97 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#333',
   },
-  // ✨ 新增样式
   pathContainer: {
     backgroundColor: '#e3e3e3',
     padding: 12,
     borderRadius: 8,
-    marginBottom: 20,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#d0d0d0',
   },
   pathLabel: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
-    color: '#555',
-    marginBottom: 4,
+    color: '#666',
+    marginBottom: 2,
     textTransform: 'uppercase',
   },
   pathText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#333',
-    fontFamily: 'monospace', // 使用等宽字体显示路径更好看
+    fontFamily: 'monospace',
+  },
+  waveformContainer: {
+    height: 100,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e0e0e0',
+    borderStyle: 'dashed',
+    borderColor: '#aaa',
+  },
+  emptyText: {
+    color: '#888',
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+  chartTitle: {
+    position: 'absolute',
+    top: 4,
+    left: 8,
+    color: '#555',
+    fontSize: 9,
+    fontWeight: 'bold',
+  },
+  barsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '100%',
+    paddingTop: 8,
+  },
+  bar: {
+    flex: 1,
+    backgroundColor: '#00e5ff',
+    marginHorizontal: 1,
+    borderRadius: 2,
+    minHeight: 2,
+  },
+  // 👈 6. 新增 Settings 样式
+  settingsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  settingLabel: {
+    fontSize: 16,
+    marginRight: 10,
+    color: '#333',
+    fontWeight: '500',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    width: 80,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#000',
   },
   buttonContainer: {
     marginBottom: 20,
@@ -156,6 +286,6 @@ const styles = StyleSheet.create({
   logText: {
     color: '#00ff00',
     fontFamily: 'monospace',
-    fontSize: 14,
+    fontSize: 12,
   },
 });

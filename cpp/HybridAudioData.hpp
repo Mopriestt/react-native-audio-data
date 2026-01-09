@@ -19,7 +19,9 @@ namespace margelo::nitro::audiodata {
     HybridAudioData() : HybridObject(TAG) {}
     virtual ~HybridAudioData() {}
 
-    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> getRawPcmData(const std::string& path) override;
+    std::shared_ptr<Promise<AudioDataResult>> getRawPcmData(const std::string& path) override;
+
+    std::shared_ptr<Promise<std::vector<double>>> getWaveformData(const std::string& path, double targetPoints) override;
   };
 
 }
