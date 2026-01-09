@@ -12,7 +12,6 @@ import {
 import { pick, types } from '@react-native-documents/picker';
 import { getRawPcmData, getWaveformData } from 'react-native-audio-data';
 
-// --- Waveform 组件保持不变 ---
 const WaveformView = ({ data }: { data: number[] }) => {
   if (!data || data.length === 0) {
     return (
@@ -56,7 +55,6 @@ export default function App() {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [waveformData, setWaveformData] = useState<number[]>([]);
 
-  // 👈 2. 新增输入框状态，默认 "50"
   const [pointCount, setPointCount] = useState<string>('50');
 
   const handlePickAndProcess = async () => {
@@ -66,7 +64,6 @@ export default function App() {
       setSelectedPath(null);
       setWaveformData([]);
 
-      // 👈 3. 解析输入值，如果是无效数字则回退到 50
       const targetPoints = parseInt(pointCount, 10) || 50;
 
       const results = await pick({
@@ -82,7 +79,6 @@ export default function App() {
 
       setSelectedPath(file.uri);
 
-      // 👈 4. 使用输入的 targetPoints
       setLog(`Selected: ${file.name}\nProcessing ${targetPoints} points...`);
       const points = await getWaveformData(file.uri, targetPoints);
       setWaveformData(points);
@@ -116,7 +112,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.header}>Audio Data Nitro Demo</Text>
+        <Text style={styles.header}>React Native Audio Data Demo</Text>
 
         {selectedPath && (
           <View style={styles.pathContainer}>
@@ -129,15 +125,14 @@ export default function App() {
 
         <WaveformView data={waveformData} />
 
-        {/* 👈 5. 新增输入框区域 */}
         <View style={styles.settingsContainer}>
           <Text style={styles.settingLabel}>Target Blocks:</Text>
           <TextInput
             style={styles.input}
             value={pointCount}
             onChangeText={setPointCount}
-            keyboardType="numeric" // 只允许输入数字
-            maxLength={4} // 限制长度，防止输入太多卡死渲染
+            keyboardType="numeric"
+            maxLength={4}
             placeholder="50"
           />
         </View>
@@ -240,7 +235,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     minHeight: 2,
   },
-  // 👈 6. 新增 Settings 样式
   settingsContainer: {
     flexDirection: 'row',
     alignItems: 'center',

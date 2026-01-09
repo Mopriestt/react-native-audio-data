@@ -4,12 +4,9 @@
 #include <string>
 #include <memory>
 
-// 引入 Nitro 核心模块
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/ArrayBuffer.hpp>
 
-// 引入 Nitrogen 自动生成的基类 (Spec)
-// 这个文件名取决于你的 nitro.json 配置，通常是 "HybridAudioDataSpec.hpp"
 #include "HybridAudioDataSpec.hpp"
 
 namespace margelo::nitro::audiodata {
